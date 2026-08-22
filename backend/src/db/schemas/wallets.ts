@@ -18,5 +18,9 @@ export const wallets = snakeCase.table(
   (table) => [
     check('wallets_name_not_blank', sql`length(trim(${table.name})) > 0`),
     check('wallets_name_max_length', sql`length(trim(${table.name})) <= 50`),
+    check(
+      'wallets_initial_balance_greather_or_equal_to_zero',
+      sql`${table.initialBalance} >= 0`,
+    ),
   ],
 );
