@@ -34,6 +34,8 @@
 
 export type SortDirection = 'asc' | 'desc';
 
+export const SORT_QUERY_PARAM_KEY = 'sort';
+
 const DEFAULT_SORT_DIRECTION: SortDirection = 'asc';
 
 export interface Sort {
@@ -92,7 +94,7 @@ function normalizeSortDirection(direction?: string): SortDirection {
 }
 
 /**
- * Converts a sort parameter value into sort objects.
+ * Converts the `sort` query parameter into sort objects.
  *
  * The parser tolerates common formatting errors, such as extra whitespace,
  * empty comma-separated expressions, missing directions, and invalid directions.
@@ -106,7 +108,9 @@ function normalizeSortDirection(direction?: string): SortDirection {
  *     { field: 'createdAt', direction: 'desc' }
  *   ]
  */
-export function parseSortQuery(paramValue: string): Sort[] {
+export function parseSortQuery(searchParams: URLSearchParams): Sort[] {
+  const paramValue = searchParams.get(SORT_QUERY_PARAM_KEY) ?? '';
+
   return splitSortExpressions(paramValue)
     .map(parseSortExpression)
     .filter(({ field }) => field.length > 0)
