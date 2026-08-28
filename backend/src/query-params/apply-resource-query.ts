@@ -13,28 +13,25 @@ import {
   lt,
   lte,
 } from 'drizzle-orm';
-import { type ResourceQueryConfig } from './resource-query-config.js';
+import { type Resource } from '../resource/resource.js';
 import type { ResourceQuery } from './resource-query.js';
 
 export function applyResourceQuery<T extends PgSelect>(
   qb: T,
   query: ResourceQuery,
-  config: ResourceQueryConfig,
+  resource: Resource,
 ) {
   applyPagination(qb, query.pagination);
 
   for (const [fieldName, fieldQuery] of query.fieldQueries) {
-    const fieldConfig = config.getFieldConfig(fieldName);
-    if (!fieldConfig) continue;
+    const field = resource.getField(fieldName);
+    if (!field) continue;
 
-    if (fieldQuery.sort && fieldConfig.isSortable())
-      applySort(qb, fieldQuery.sort, fieldConfig.column);
+    if (fieldQuery.sort && field.isSortable())
+      applySort(qb, fieldQuery.sort, field.column);
 
-    if (
-      fieldQuery.filter &&
-      fieldConfig.isFilterableVia(fieldQuery.filter.operator)
-    )
-      applyFilter(qb, fieldQuery.filter, fieldConfig.column);
+    if (fieldQuery.filter && field.isFilterableVia(fieldQuery.filter.operator))
+      applyFilter(qb, fieldQuery.filter, field.column);
   }
 
   return qb;
