@@ -32,7 +32,7 @@ const categoriesResource = new Resource({
 categoriesRoutes.get('/', async (ctx) => {
   const result = await applyResourceQuery(
     db.select().from(categories).$dynamic(),
-    parseResourceQuery(new URLSearchParams(ctx.req.raw.url)),
+    parseResourceQuery(new URL(ctx.req.raw.url).searchParams),
     categoriesResource,
   );
   return ctx.json(result);
