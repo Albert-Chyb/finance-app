@@ -32,7 +32,7 @@
 // Example: lastName
 // Treat the entire value as the field name and use the default direction.
 
-export type SortDirection = 'asc' | 'desc';
+import type { SortDirection } from '../resource/sort-direction.js';
 
 export const SORT_QUERY_PARAM_KEY = 'sort';
 

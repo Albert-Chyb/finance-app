@@ -1,7 +1,7 @@
 import type { PgSelect } from 'drizzle-orm/pg-core';
 import type { ResourceField } from './resource-field.js';
-import type { SortDirection } from '../query-params/parse-sort-query.js';
 import { asc, desc } from 'drizzle-orm';
+import type { SortDirection } from './sort-direction.js';
 
 export class Sort {
   constructor(
