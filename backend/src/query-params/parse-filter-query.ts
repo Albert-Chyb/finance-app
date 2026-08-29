@@ -1,31 +1,10 @@
-import {
-  type FilterOperator,
-  filterOperatorSchema,
-} from '../resource/filters/filter-operator.js';
-
 export interface FilterRequest {
   field: string;
-  operator: FilterOperator;
-  value: string | number;
+  operator: string;
+  value: unknown;
 }
 
 const FILTER_PARAM_PATTERN = /^filter\[([^\]]+)\]\[([^\]]+)\]$/;
-const NUMBER_PATTERN = /^-?(?:0|[1-9]\d*)(?:\.\d+)?$/;
-
-function isFilterOperator(operator: string): operator is FilterOperator {
-  const { success } = filterOperatorSchema.safeParse(operator);
-  return success;
-}
-
-function parseFilterValue(value: string): string | number {
-  if (!NUMBER_PATTERN.test(value)) {
-    return value;
-  }
-
-  const numericValue = Number(value);
-
-  return Number.isFinite(numericValue) ? numericValue : value;
-}
 
 /**
  * Converts nested filter query parameters into filter objects.
@@ -53,14 +32,10 @@ export function parseFilterQuery(
 
     const [, field, operator] = match;
 
-    if (!isFilterOperator(operator)) {
-      continue;
-    }
-
     filters.push({
       field,
       operator,
-      value: parseFilterValue(value),
+      value,
     });
   }
 
