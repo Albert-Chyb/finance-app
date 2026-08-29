@@ -2,7 +2,7 @@ import type { Handler } from 'hono';
 import type { Resource } from './resource.js';
 import { db } from '../setup/db-connection.js';
 import { parseResourceQuery } from '../query-params/parse-resource-query.js';
-import type { PgSelect } from 'drizzle-orm/pg-core';
+import type { AnyPgColumn, PgSelect } from 'drizzle-orm/pg-core';
 import type { ResourceQueryRequest } from '../query-params/resource-query-request.js';
 
 export class ResourceApi {
@@ -11,11 +11,23 @@ export class ResourceApi {
   get(): Handler {
     return async (ctx) => {
       const { searchParams } = new URL(ctx.req.raw.url);
-      const q = db.select().from(this.resource.table).$dynamic();
+      const q = db
+        .select(this.buildSelectColumns())
+        .from(this.resource.table)
+        .$dynamic();
       const queryRequest = parseResourceQuery(searchParams);
       const result = await this.applyResourceQueryRequest(q, queryRequest);
       return ctx.json(result);
     };
+  }
+
+  private buildSelectColumns(): Record<string, AnyPgColumn> {
+    return Object.fromEntries(
+      Object.entries(this.resource.getFields()).map(([fieldName, field]) => [
+        fieldName,
+        field.column,
+      ]),
+    );
   }
 
   private applyResourceQueryRequest<T extends PgSelect>(

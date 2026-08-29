@@ -1,8 +1,8 @@
-import type { AnyColumn } from 'drizzle-orm';
+import type { AnyPgColumn } from 'drizzle-orm/pg-core';
 import type { FilterOperator } from '../query-params/parse-filter-query.js';
 
 export interface ResourceFieldConfig {
-  column: AnyColumn;
+  column: AnyPgColumn;
   isSortable: boolean;
   allowedFilters: FilterOperator[];
 }

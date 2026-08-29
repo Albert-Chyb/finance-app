@@ -22,6 +22,10 @@ export class Resource {
     return field;
   }
 
+  getFields(): Record<string, ResourceField> {
+    return this.config.fields;
+  }
+
   resolvePagination(paginationRequest: PaginationRequest): Pagination {
     const { pageIndex, pageSize } = paginationRequest;
     return new Pagination(pageIndex, pageSize);

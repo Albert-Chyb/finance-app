@@ -9,6 +9,11 @@ const categoriesRoutes = new Hono();
 const categoriesResource = new Resource({
   table: categories,
   fields: {
+    id: new ResourceField({
+      column: categories.id,
+      isSortable: true,
+      allowedFilters: [],
+    }),
     name: new ResourceField({
       column: categories.name,
       isSortable: true,
