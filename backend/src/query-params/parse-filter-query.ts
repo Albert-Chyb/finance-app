@@ -1,4 +1,7 @@
-export type FilterOperator = 'text-contains' | 'array-contains' | 'eq';
+import {
+  type FilterOperator,
+  filterOperatorSchema,
+} from '../resource/filters/filter-operator.js';
 
 export interface FilterRequest {
   field: string;
@@ -8,14 +11,10 @@ export interface FilterRequest {
 
 const FILTER_PARAM_PATTERN = /^filter\[([^\]]+)\]\[([^\]]+)\]$/;
 const NUMBER_PATTERN = /^-?(?:0|[1-9]\d*)(?:\.\d+)?$/;
-const FILTER_OPERATORS: readonly FilterOperator[] = [
-  'text-contains',
-  'array-contains',
-  'eq',
-];
 
 function isFilterOperator(operator: string): operator is FilterOperator {
-  return FILTER_OPERATORS.includes(operator as FilterOperator);
+  const { success } = filterOperatorSchema.safeParse(operator);
+  return success;
 }
 
 function parseFilterValue(value: string): string | number {

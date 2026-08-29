@@ -1,6 +1,6 @@
-import type { FilterOperator } from '../query-params/parse-filter-query.js';
 import type { ResourceFieldConfig } from './resource-field-config.js';
 import type { AnyPgColumn } from 'drizzle-orm/pg-core';
+import type { FilterOperator } from './filters/filter-operator.js';
 
 export class ResourceField {
   public column: AnyPgColumn;
