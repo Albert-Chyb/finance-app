@@ -12,7 +12,7 @@ const categoriesResource = new Resource({
     id: new ResourceField({
       column: categories.id,
       isSortable: true,
-      allowedFilters: [],
+      allowedFilters: ['eq'],
     }),
     name: new ResourceField({
       column: categories.name,
