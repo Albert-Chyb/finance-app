@@ -1,6 +1,11 @@
+import {
+  type FilterOperator,
+  filterOperatorSchema,
+} from '../resource/filters/filter-operator.js';
+
 export interface FilterRequest {
   field: string;
-  operator: string;
+  operator: FilterOperator;
   value: unknown;
 }
 
@@ -31,10 +36,13 @@ export function parseFilterQuery(
     }
 
     const [, field, operator] = match;
+    const { data: supportedOperator } =
+      filterOperatorSchema.safeParse(operator);
+    if (!supportedOperator) continue;
 
     filters.push({
       field,
-      operator,
+      operator: supportedOperator,
       value,
     });
   }
