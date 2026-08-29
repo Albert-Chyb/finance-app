@@ -24,9 +24,11 @@ const paginationSchema = z.object({
     .transform((value) => clamp(value, 1, MAX_PAGE_SIZE)),
 });
 
-export type Pagination = z.infer<typeof paginationSchema>;
+export type PaginationRequest = z.infer<typeof paginationSchema>;
 
-export function parsePaginationQuery(params: URLSearchParams): Pagination {
+export function parsePaginationQuery(
+  params: URLSearchParams,
+): PaginationRequest {
   const pageIndex = params.get('pageIndex') ?? undefined;
   const pageSize = params.get('pageSize') ?? undefined;
   return paginationSchema.parse({ pageIndex, pageSize });

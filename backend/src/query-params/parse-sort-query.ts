@@ -38,7 +38,7 @@ export const SORT_QUERY_PARAM_KEY = 'sort';
 
 const DEFAULT_SORT_DIRECTION: SortDirection = 'asc';
 
-export interface Sort {
+export interface SortRequest {
   field: string;
   direction: SortDirection;
 }
@@ -108,7 +108,7 @@ function normalizeSortDirection(direction?: string): SortDirection {
  *     { field: 'createdAt', direction: 'desc' }
  *   ]
  */
-export function parseSortQuery(searchParams: URLSearchParams): Sort[] {
+export function parseSortQuery(searchParams: URLSearchParams): SortRequest[] {
   const paramValue = searchParams.get(SORT_QUERY_PARAM_KEY) ?? '';
 
   return splitSortExpressions(paramValue)

@@ -1,13 +1,6 @@
-export type FilterOperator =
-  | 'eq'
-  | 'neq'
-  | 'gt'
-  | 'gte'
-  | 'lt'
-  | 'lte'
-  | 'contains';
+export type FilterOperator = 'text-contains' | 'array-contains';
 
-export interface Filter {
+export interface FilterRequest {
   field: string;
   operator: FilterOperator;
   value: string | number;
@@ -16,13 +9,8 @@ export interface Filter {
 const FILTER_PARAM_PATTERN = /^filter\[([^\]]+)\]\[([^\]]+)\]$/;
 const NUMBER_PATTERN = /^-?(?:0|[1-9]\d*)(?:\.\d+)?$/;
 const FILTER_OPERATORS: readonly FilterOperator[] = [
-  'eq',
-  'neq',
-  'gt',
-  'gte',
-  'lt',
-  'lte',
-  'contains',
+  'text-contains',
+  'array-contains',
 ];
 
 function isFilterOperator(operator: string): operator is FilterOperator {
@@ -51,8 +39,10 @@ function parseFilterValue(value: string): string | number {
  *     { field: 'age', operator: 'gte', value: 18 }
  *   ]
  */
-export function parseFilterQuery(searchParams: URLSearchParams): Filter[] {
-  const filters: Filter[] = [];
+export function parseFilterQuery(
+  searchParams: URLSearchParams,
+): FilterRequest[] {
+  const filters: FilterRequest[] = [];
 
   for (const [key, value] of searchParams) {
     const match = FILTER_PARAM_PATTERN.exec(key);

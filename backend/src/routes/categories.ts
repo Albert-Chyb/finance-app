@@ -1,10 +1,8 @@
 import { Hono } from 'hono';
-import { db } from '../setup/db-connection.js';
 import { categories } from '../db/schemas/categories.js';
 import { Resource } from '../resource/resource.js';
-import { applyResourceQuery } from '../query-params/apply-resource-query.js';
-import { parseResourceQuery } from '../query-params/parse-resource-query.js';
 import { ResourceField } from '../resource/resource-field.js';
+import { ResourceApi } from '../resource/resource-api.js';
 
 const categoriesRoutes = new Hono();
 
@@ -14,28 +12,23 @@ const categoriesResource = new Resource({
     name: new ResourceField({
       column: categories.name,
       isSortable: true,
-      allowedFilters: ['eq'],
+      allowedFilters: ['text-contains'],
     }),
     createdAt: new ResourceField({
       column: categories.createdAt,
       isSortable: true,
-      allowedFilters: ['eq'],
+      allowedFilters: [],
     }),
     color: new ResourceField({
       column: categories.color,
       isSortable: true,
-      allowedFilters: ['eq'],
+      allowedFilters: ['array-contains'],
     }),
   },
 });
 
-categoriesRoutes.get('/', async (ctx) => {
-  const result = await applyResourceQuery(
-    db.select().from(categories).$dynamic(),
-    parseResourceQuery(new URL(ctx.req.raw.url).searchParams),
-    categoriesResource,
-  );
-  return ctx.json(result);
-});
+const resourceApi = new ResourceApi(categoriesResource);
+
+categoriesRoutes.get('/', resourceApi.get());
 
 export default categoriesRoutes;
