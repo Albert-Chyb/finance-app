@@ -14,24 +14,8 @@ describe('parseTableQuery', () => {
         pageIndex: 1,
         pageSize: 10,
       },
-      fieldQueries: new Map([
-        [
-          'name',
-          {
-            sort: {
-              direction: 'asc',
-              field: 'name',
-            },
-            filter: {
-              field: 'name',
-              operator: 'eq',
-              value: 'john',
-            },
-          },
-        ],
-      ]),
+      sort: [{ field: 'name', direction: 'asc' }],
+      filters: [{ field: 'name', operator: 'eq', value: 'john' }],
     });
   });
-
-  //   TODO: Test scenario when a field has only sort or filter.
 });
