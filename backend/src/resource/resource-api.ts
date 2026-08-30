@@ -36,12 +36,25 @@ export class ResourceApi {
   ) {
     this.resource.resolvePagination(query.pagination).applyTo(builder);
 
-    for (let sortRequest of query.sort)
-      this.resource.resolveSort(sortRequest)?.applyTo(builder);
+    this.applySortRequest(query, builder);
 
     for (let filterRequest of query.filters)
       this.resource.resolveFilter(filterRequest)?.applyTo(builder);
 
     return builder;
+  }
+  private applySortRequest<T extends PgSelect>(
+    query: ResourceQueryRequest,
+    builder: T,
+  ) {
+    let isSortApplied = false;
+    for (let sortRequest of query.sort) {
+      const sort = this.resource.resolveSort(sortRequest);
+      if (sort) {
+        isSortApplied = true;
+        sort.applyTo(builder);
+      }
+    }
+    if (!isSortApplied) this.resource.defaultSort.applyTo(builder);
   }
 }

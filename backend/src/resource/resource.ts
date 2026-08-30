@@ -11,9 +11,11 @@ import { getFilterConstructor } from './filters/get-filter-constructor.js';
 
 export class Resource {
   public table: PgTable;
+  public defaultSort: Sort;
 
   constructor(private config: ResourceConfig) {
     this.table = config.table;
+    this.defaultSort = config.defaultSort;
   }
 
   getField(name: string): ResourceField | null {
