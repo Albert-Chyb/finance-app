@@ -4,6 +4,7 @@ import { db } from '../setup/db-connection.js';
 import { parseResourceQuery } from '../query-params/parse-resource-query.js';
 import type { AnyPgColumn, PgSelect } from 'drizzle-orm/pg-core';
 import type { ResourceQueryRequest } from '../query-params/resource-query-request.js';
+import { HTTPException } from 'hono/http-exception';
 
 export class ResourceApi {
   constructor(public resource: Resource) {}
@@ -18,6 +19,16 @@ export class ResourceApi {
       const queryRequest = parseResourceQuery(searchParams);
       const result = await this.applyResourceQueryRequest(q, queryRequest);
       return ctx.json(result);
+    };
+  }
+
+  post(): Handler {
+    return async (c) => {
+      const body = await c.req.json();
+      const { error, data } = this.resource.validateInsert(body);
+      if (error) throw new HTTPException(400, error);
+      const result = await db.insert(this.resource.table).values(data);
+      return c.json(result);
     };
   }
 
@@ -43,6 +54,7 @@ export class ResourceApi {
 
     return builder;
   }
+
   private applySortRequest<T extends PgSelect>(
     query: ResourceQueryRequest,
     builder: T,

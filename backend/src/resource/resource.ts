@@ -28,6 +28,10 @@ export class Resource {
     return this.config.fields;
   }
 
+  validateInsert(data: unknown) {
+    return this.config.insertSchema.safeParse(data);
+  }
+
   resolvePagination(paginationRequest: PaginationRequest): Pagination {
     const { pageIndex, pageSize } = paginationRequest;
     return new Pagination(pageIndex, pageSize);

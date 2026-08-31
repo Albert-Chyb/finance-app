@@ -4,6 +4,7 @@ import { Resource } from '../resource/resource.js';
 import { ResourceField } from '../resource/resource-field.js';
 import { ResourceApi } from '../resource/resource-api.js';
 import { Sort } from '../resource/sort.js';
+import { categoryInsertSchema } from '../db/zod-schemas/category-insert-schema.js';
 
 const categoriesRoutes = new Hono();
 
@@ -15,6 +16,7 @@ const idField = new ResourceField({
 
 const categoriesResource = new Resource({
   table: categories,
+  insertSchema: categoryInsertSchema,
   defaultSort: new Sort(idField, 'asc'),
   fields: {
     id: idField,
@@ -39,5 +41,7 @@ const categoriesResource = new Resource({
 const resourceApi = new ResourceApi(categoriesResource);
 
 categoriesRoutes.get('/', resourceApi.get());
+
+categoriesRoutes.post('/', resourceApi.post());
 
 export default categoriesRoutes;
