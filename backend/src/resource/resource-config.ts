@@ -9,5 +9,5 @@ export interface ResourceConfig {
   identifierField: ResourceField;
   defaultSort: Sort;
   fields: Record<string, ResourceField>;
-  insertSchema: z.ZodSchema<{} | []>;
+  insertSchema: z.ZodObject;
 }

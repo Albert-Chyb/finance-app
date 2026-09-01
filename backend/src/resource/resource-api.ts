@@ -33,6 +33,48 @@ export class ResourceApi {
     };
   }
 
+  put(): Handler {
+    return async (c) => {
+      const id = c.req.param('id');
+      if (!id)
+        throw new Error('The endpoint path does not contain id parameter');
+
+      const body = await c.req.json();
+      const { error, data } = this.resource.validateInsert(body);
+      if (error) throw new HTTPException(400, error);
+
+      const updatedRecord = await db
+        .update(this.resource.table)
+        .set(data)
+        .where(eq(this.resource.identifierField.column, id))
+        .returning();
+      return c.json(updatedRecord);
+    };
+  }
+
+  patch(): Handler {
+    return async (c) => {
+      const id = c.req.param('id');
+      if (!id)
+        throw new Error('The endpoint path does not contain id parameter');
+
+      const body = await c.req.json();
+      const { error, data } = this.resource.validatePatch(body);
+      if (error) throw new HTTPException(400, error);
+      if (Object.keys(data).length === 0)
+        throw new HTTPException(400, {
+          message: 'Patch body must not be empty',
+        });
+
+      const updatedRecord = await db
+        .update(this.resource.table)
+        .set(data)
+        .where(eq(this.resource.identifierField.column, id))
+        .returning();
+      return c.json(updatedRecord);
+    };
+  }
+
   delete(): Handler {
     return async (c) => {
       const id = c.req.param('id');

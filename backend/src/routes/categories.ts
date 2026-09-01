@@ -45,6 +45,10 @@ categoriesRoutes.get('/', resourceApi.get());
 
 categoriesRoutes.post('/', resourceApi.post());
 
+categoriesRoutes.put('/:id', resourceApi.put());
+
+categoriesRoutes.patch('/:id', resourceApi.patch());
+
 categoriesRoutes.delete('/:id', resourceApi.delete());
 
 export default categoriesRoutes;
