@@ -31,7 +31,6 @@ describe('TextContainsFilter', () => {
     ]);
 
     filter.applyTo(query);
-    console.log(query.toSQL());
 
     expect(query.toSQL()).toMatchObject({
       sql: expect.stringContaining('"a"."name" && $1'),
