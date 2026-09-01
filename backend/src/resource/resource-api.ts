@@ -5,6 +5,7 @@ import { parseResourceQuery } from '../query-params/parse-resource-query.js';
 import type { AnyPgColumn, PgSelect } from 'drizzle-orm/pg-core';
 import type { ResourceQueryRequest } from '../query-params/resource-query-request.js';
 import { HTTPException } from 'hono/http-exception';
+import { eq } from 'drizzle-orm';
 
 export class ResourceApi {
   constructor(public resource: Resource) {}
@@ -29,6 +30,19 @@ export class ResourceApi {
       if (error) throw new HTTPException(400, error);
       const result = await db.insert(this.resource.table).values(data);
       return c.json(result);
+    };
+  }
+
+  delete(): Handler {
+    return async (c) => {
+      const id = c.req.param('id');
+      if (!id)
+        throw new Error('The endpoint path does not contain id parameter');
+      const deletedRecord = await db
+        .delete(this.resource.table)
+        .where(eq(this.resource.identifierField.column, id))
+        .returning();
+      return c.json(deletedRecord);
     };
   }
 

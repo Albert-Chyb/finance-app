@@ -12,10 +12,12 @@ import { getFilterConstructor } from './filters/get-filter-constructor.js';
 export class Resource {
   public table: PgTable;
   public defaultSort: Sort;
+  public identifierField: ResourceField;
 
   constructor(private config: ResourceConfig) {
     this.table = config.table;
     this.defaultSort = config.defaultSort;
+    this.identifierField = config.identifierField;
   }
 
   getField(name: string): ResourceField | null {

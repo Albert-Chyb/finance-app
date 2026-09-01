@@ -16,6 +16,7 @@ const idField = new ResourceField({
 
 const categoriesResource = new Resource({
   table: categories,
+  identifierField: idField,
   insertSchema: categoryInsertSchema,
   defaultSort: new Sort(idField, 'asc'),
   fields: {
@@ -43,5 +44,7 @@ const resourceApi = new ResourceApi(categoriesResource);
 categoriesRoutes.get('/', resourceApi.get());
 
 categoriesRoutes.post('/', resourceApi.post());
+
+categoriesRoutes.delete('/:id', resourceApi.delete());
 
 export default categoriesRoutes;

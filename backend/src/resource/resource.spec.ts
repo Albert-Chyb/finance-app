@@ -8,6 +8,7 @@ import { Pagination } from './pagination.js';
 import type { SortRequest } from '../query-params/parse-sort-query.js';
 import type { FilterRequest } from '../query-params/parse-filter-query.js';
 import { EqualsFilter } from './filters/equals.js';
+import { z } from 'zod';
 
 const table = pgTable('a', {
   id: integer().primaryKey(),
@@ -29,6 +30,8 @@ const nameField = new ResourceField({
 function createResource() {
   return new Resource({
     table,
+    identifierField: idField,
+    insertSchema: z.object(),
     defaultSort: new Sort(idField, 'asc'),
     fields: {
       id: idField,
