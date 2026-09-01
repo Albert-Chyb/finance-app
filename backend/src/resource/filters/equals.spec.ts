@@ -21,7 +21,7 @@ function createField() {
   });
 }
 
-describe('TextContainsFilter', () => {
+describe('EqualsFilter', () => {
   it('applies equality filter to the selected column', () => {
     const query = createQuery();
     const field = createField();

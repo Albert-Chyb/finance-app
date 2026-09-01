@@ -21,7 +21,7 @@ function createField() {
   });
 }
 
-describe('TextContainsFilter', () => {
+describe('ArrayContainsFilter', () => {
   it('applies ilike filter to the selected column', () => {
     const query = createQuery();
     const field = createField();
