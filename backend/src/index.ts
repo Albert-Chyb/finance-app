@@ -1,10 +1,8 @@
 import { serve } from '@hono/node-server';
-import { Hono } from 'hono';
 import 'dotenv/config';
-import routes from './routes/index.js';
+import { createApp } from './setup/create-app.js';
 
-const app = new Hono();
-app.route('/api', routes);
+const app = createApp();
 
 serve(
   {
