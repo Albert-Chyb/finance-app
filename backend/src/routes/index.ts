@@ -1,8 +1,11 @@
-import categoriesRoutes from './categories.js';
 import { Hono } from 'hono';
+import type { DbConnection } from '../setup/db-connection.js';
+import { createCategoriesRoutes } from './categories.js';
 
-const routes = new Hono();
+export function createRoutes(db: DbConnection) {
+  const routes = new Hono();
 
-routes.route('/categories', categoriesRoutes);
+  routes.route('/categories', createCategoriesRoutes(db));
 
-export default routes;
+  return routes;
+}

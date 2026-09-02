@@ -5,50 +5,53 @@ import { ResourceField } from '../resource/resource-field.js';
 import { ResourceApi } from '../resource/resource-api.js';
 import { Sort } from '../resource/sort.js';
 import { categoryInsertSchema } from '../db/zod-schemas/category-insert-schema.js';
+import type { createDb } from '../setup/db-connection.js';
 
-const categoriesRoutes = new Hono();
+export function createCategoriesRoutes(db: ReturnType<typeof createDb>) {
+  const categoriesRoutes = new Hono();
 
-const idField = new ResourceField({
-  column: categories.id,
-  isSortable: true,
-  allowedFilters: ['eq'],
-});
+  const idField = new ResourceField({
+    column: categories.id,
+    isSortable: true,
+    allowedFilters: ['eq'],
+  });
 
-const categoriesResource = new Resource({
-  table: categories,
-  identifierField: idField,
-  insertSchema: categoryInsertSchema,
-  defaultSort: new Sort(idField, 'asc'),
-  fields: {
-    id: idField,
-    name: new ResourceField({
-      column: categories.name,
-      isSortable: true,
-      allowedFilters: ['text-contains'],
-    }),
-    createdAt: new ResourceField({
-      column: categories.createdAt,
-      isSortable: true,
-      allowedFilters: [],
-    }),
-    color: new ResourceField({
-      column: categories.color,
-      isSortable: true,
-      allowedFilters: ['array-contains'],
-    }),
-  },
-});
+  const categoriesResource = new Resource({
+    table: categories,
+    identifierField: idField,
+    insertSchema: categoryInsertSchema,
+    defaultSort: new Sort(idField, 'asc'),
+    fields: {
+      id: idField,
+      name: new ResourceField({
+        column: categories.name,
+        isSortable: true,
+        allowedFilters: ['text-contains'],
+      }),
+      createdAt: new ResourceField({
+        column: categories.createdAt,
+        isSortable: true,
+        allowedFilters: [],
+      }),
+      color: new ResourceField({
+        column: categories.color,
+        isSortable: true,
+        allowedFilters: ['array-contains'],
+      }),
+    },
+  });
 
-const resourceApi = new ResourceApi(categoriesResource);
+  const resourceApi = new ResourceApi(categoriesResource, db);
 
-categoriesRoutes.get('/', resourceApi.get());
+  categoriesRoutes.get('/', resourceApi.get());
 
-categoriesRoutes.post('/', resourceApi.post());
+  categoriesRoutes.post('/', resourceApi.post());
 
-categoriesRoutes.put('/:id', resourceApi.put());
+  categoriesRoutes.put('/:id', resourceApi.put());
 
-categoriesRoutes.patch('/:id', resourceApi.patch());
+  categoriesRoutes.patch('/:id', resourceApi.patch());
 
-categoriesRoutes.delete('/:id', resourceApi.delete());
+  categoriesRoutes.delete('/:id', resourceApi.delete());
 
-export default categoriesRoutes;
+  return categoriesRoutes;
+}

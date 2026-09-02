@@ -1,8 +1,9 @@
 import { Hono } from 'hono';
-import { setupRoutes } from './routes.js';
+import { createDb } from './db-connection.js';
+import { setupRoutes } from './setup-routes.js';
 
-export function createApp() {
+export function createApp(connectionString = process.env.DATABASE_URL!) {
   const app = new Hono();
-  setupRoutes(app);
+  setupRoutes(app, createDb(connectionString));
   return app;
 }

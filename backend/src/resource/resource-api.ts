@@ -1,6 +1,6 @@
 import type { Handler } from 'hono';
 import type { Resource } from './resource.js';
-import { db } from '../setup/db-connection.js';
+import type { createDb } from '../setup/db-connection.js';
 import { parseResourceQuery } from '../query-params/parse-resource-query.js';
 import type { AnyPgColumn, PgSelect } from 'drizzle-orm/pg-core';
 import type { ResourceQueryRequest } from '../query-params/resource-query-request.js';
@@ -8,12 +8,15 @@ import { HTTPException } from 'hono/http-exception';
 import { eq } from 'drizzle-orm';
 
 export class ResourceApi {
-  constructor(public resource: Resource) {}
+  constructor(
+    public resource: Resource,
+    private db: ReturnType<typeof createDb>,
+  ) {}
 
   get(): Handler {
     return async (ctx) => {
       const { searchParams } = new URL(ctx.req.raw.url);
-      const q = db
+      const q = this.db
         .select(this.buildSelectColumns())
         .from(this.resource.table)
         .$dynamic();
@@ -28,7 +31,7 @@ export class ResourceApi {
       const body = await c.req.json();
       const { error, data } = this.resource.validateInsert(body);
       if (error) throw new HTTPException(400, error);
-      const result = await db.insert(this.resource.table).values(data);
+      const result = await this.db.insert(this.resource.table).values(data);
       return c.json(result);
     };
   }
@@ -43,7 +46,7 @@ export class ResourceApi {
       const { error, data } = this.resource.validateInsert(body);
       if (error) throw new HTTPException(400, error);
 
-      const updatedRecord = await db
+      const updatedRecord = await this.db
         .update(this.resource.table)
         .set(data)
         .where(eq(this.resource.identifierField.column, id))
@@ -66,7 +69,7 @@ export class ResourceApi {
           message: 'Patch body must not be empty',
         });
 
-      const updatedRecord = await db
+      const updatedRecord = await this.db
         .update(this.resource.table)
         .set(data)
         .where(eq(this.resource.identifierField.column, id))
@@ -80,7 +83,7 @@ export class ResourceApi {
       const id = c.req.param('id');
       if (!id)
         throw new Error('The endpoint path does not contain id parameter');
-      const deletedRecord = await db
+      const deletedRecord = await this.db
         .delete(this.resource.table)
         .where(eq(this.resource.identifierField.column, id))
         .returning();
