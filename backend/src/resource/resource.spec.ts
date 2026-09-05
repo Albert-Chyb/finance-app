@@ -55,14 +55,16 @@ describe('Resource', () => {
     });
   });
 
-  describe('getFields', () => {
-    it('returns map of all present fields', () => {
+  describe('getColumnMappings', () => {
+    it('maps field name to its column', () => {
       const resource = createResource();
 
-      expect(resource.getFields()).toEqual({
-        id: idField,
-        name: nameField,
-      });
+      expect(resource.getColumnMappings()).toEqual(
+        new Map<any, any>([
+          ['id', table.id],
+          ['name', table.name],
+        ]),
+      );
     });
   });
 

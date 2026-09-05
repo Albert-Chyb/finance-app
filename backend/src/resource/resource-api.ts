@@ -92,12 +92,8 @@ export class ResourceApi {
   }
 
   private buildSelectColumns(): Record<string, AnyPgColumn> {
-    return Object.fromEntries(
-      Object.entries(this.resource.getFields()).map(([fieldName, field]) => [
-        fieldName,
-        field.column,
-      ]),
-    );
+    const mappings = this.resource.getColumnMappings();
+    return Object.fromEntries(mappings.entries());
   }
 
   private applyResourceQueryRequest<T extends PgSelect>(

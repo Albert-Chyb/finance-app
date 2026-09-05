@@ -1,6 +1,6 @@
 import { ResourceField } from './resource-field.js';
 import type { ResourceConfig } from './resource-config.js';
-import type { PgTable } from 'drizzle-orm/pg-core';
+import type { AnyPgColumn, PgTable } from 'drizzle-orm/pg-core';
 import type { SortRequest } from '../query-params/parse-sort-query.js';
 import { Sort } from './sort.js';
 import type { PaginationRequest } from '../query-params/parse-pagination-query.js';
@@ -26,8 +26,13 @@ export class Resource {
     return field;
   }
 
-  getFields(): Record<string, ResourceField> {
-    return this.config.fields;
+  getColumnMappings(): Map<string, AnyPgColumn> {
+    const map = new Map<string, AnyPgColumn>();
+    for (const fieldName in this.config.fields) {
+      const field = this.config.fields[fieldName];
+      map.set(fieldName, field.column);
+    }
+    return map;
   }
 
   validateInsert(data: unknown) {
